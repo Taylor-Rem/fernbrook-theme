@@ -35,14 +35,14 @@
       viewBox="0 0 400 400"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <circle cx="200" cy="200" r="150" fill="none" style="stroke: var(--hero-accent); opacity: 0.3;" stroke-width="34"/>
+      <circle cx="200" cy="200" r="150" fill="none" style="stroke: var(--hero-accent); opacity: 0.3;" stroke-width="34" stroke-dasharray="200 48" stroke-linecap="round" data-fb-rotate="80"/>
       <circle cx="200" cy="200" r="86" style="fill: var(--hero-accent); opacity: 0.12;"/>
     </svg>
 
     {% comment %} Fast layer: line-art botanical sprig, right side {% endcomment %}
     <svg
       class="fb-hero__layer fb-hero__layer--sprig"
-      {% if section.settings.parallax_drift > 0 %}data-fb-parallax="{{ drift_fast }}"{% endif %}
+      {% if section.settings.parallax_drift > 0 %}data-fb-parallax="{{ drift_fast }}" data-fb-rotate="-10"{% endif %}
       viewBox="0 0 300 520"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -59,7 +59,7 @@
     {% comment %} Mid layer: small seed cluster, bottom left of content {% endcomment %}
     <svg
       class="fb-hero__layer fb-hero__layer--seeds"
-      {% if section.settings.parallax_drift > 0 %}data-fb-parallax="{{ drift_mid }}"{% endif %}
+      {% if section.settings.parallax_drift > 0 %}data-fb-parallax="{{ drift_mid }}" data-fb-rotate="24"{% endif %}
       viewBox="0 0 200 120"
       xmlns="http://www.w3.org/2000/svg"
       style="fill: var(--hero-accent);"

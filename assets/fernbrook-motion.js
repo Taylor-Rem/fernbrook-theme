@@ -76,11 +76,17 @@
   /* --------------------------------------------------------------- parallax */
 
   function setupParallax() {
-    var layers = Array.prototype.slice.call(document.querySelectorAll('[data-fb-parallax]'));
+    var layers = Array.prototype.slice.call(document.querySelectorAll('[data-fb-parallax], [data-fb-rotate]'));
     if (!layers.length) return;
 
     var items = layers.map(function (el) {
-      return { el: el, speed: parseFloat(el.getAttribute('data-fb-parallax')) || 0.1, visible: false };
+      return {
+        el: el,
+        speed: parseFloat(el.getAttribute('data-fb-parallax')) || 0,
+        // Total degrees swept while the element's host travels through the viewport.
+        rotate: parseFloat(el.getAttribute('data-fb-rotate')) || 0,
+        visible: false,
+      };
     });
 
     var visibility = new IntersectionObserver(function (entries) {
@@ -106,8 +112,10 @@
         var rect = host.getBoundingClientRect();
         // Progress of the host through the viewport: 0 entering, 1 leaving.
         var progress = (viewportHeight - rect.top) / (viewportHeight + rect.height);
-        var shift = (progress - 0.5) * item.speed * viewportHeight;
-        item.el.style.transform = 'translate3d(0,' + shift.toFixed(1) + 'px,0)';
+        var centered = progress - 0.5;
+        var transform = 'translate3d(0,' + (centered * item.speed * viewportHeight).toFixed(1) + 'px,0)';
+        if (item.rotate) transform += ' rotate(' + (centered * item.rotate).toFixed(2) + 'deg)';
+        item.el.style.transform = transform;
       });
     }
 

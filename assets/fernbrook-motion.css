@@ -40,6 +40,12 @@ html.fb-motion :is([data-fb-reveal], .fb-reveal).fb-in {
   transform: none;
 }
 
+/* Scroll-rotated elements (including SVG shapes) spin around their own center. */
+[data-fb-rotate] {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
 /* Belt and suspenders: even if the class somehow lands, never animate for
    visitors who asked for reduced motion. */
 @media (prefers-reduced-motion: reduce) {

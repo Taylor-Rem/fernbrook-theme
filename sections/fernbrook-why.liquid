@@ -8,6 +8,32 @@
     --why-accent: {{ section.settings.accent_color }};
   "
 >
+  <div class="fb-why__art" aria-hidden="true">
+    <svg
+      class="fb-why__mark"
+      data-fb-rotate="140"
+      data-fb-parallax="0.06"
+      viewBox="0 0 200 200"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style="stroke: var(--why-accent); opacity: 0.35;"
+    >
+      <path d="M100 18v164M18 100h164M42 42l116 116M158 42 42 158" stroke-width="14" stroke-linecap="round"/>
+      <circle cx="100" cy="100" r="20" style="fill: var(--why-bg); stroke: none;"/>
+    </svg>
+    <svg
+      class="fb-why__blob"
+      data-fb-parallax="0.12"
+      viewBox="0 0 400 400"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M200 30c76-18 152 22 170 96s-26 144-88 175-138 12-188-44S32 118 76 68 150 42 200 30Z"
+        style="fill: var(--why-text); opacity: 0.05;"
+      />
+    </svg>
+  </div>
+
   <div class="fb-why__inner">
     <div class="fb-why__header">
       {% if section.settings.heading != blank %}
@@ -73,11 +99,36 @@
 
 {% stylesheet %}
   .fb-why {
+    position: relative;
+    overflow: hidden;
     background-color: var(--why-bg);
     color: var(--why-text);
   }
 
+  .fb-why__art {
+    position: absolute;
+    inset: -10% 0;
+    pointer-events: none;
+  }
+
+  .fb-why__mark {
+    position: absolute;
+    top: 14%;
+    right: -3%;
+    width: clamp(120px, 15vw, 220px);
+    height: auto;
+  }
+
+  .fb-why__blob {
+    position: absolute;
+    bottom: -12%;
+    left: -8%;
+    width: clamp(260px, 34vw, 520px);
+    height: auto;
+  }
+
   .fb-why__inner {
+    position: relative;
     width: min(1160px, 100% - 2.5rem);
     margin-inline: auto;
     padding-block: clamp(3.5rem, 9vw, 6.5rem);
