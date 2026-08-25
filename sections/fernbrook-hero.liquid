@@ -1,0 +1,429 @@
+{% liquid
+  assign drift = section.settings.parallax_drift | times: 0.012
+  assign drift_mid = drift | times: 1.8
+  assign drift_fast = drift | times: 2.6
+%}
+
+<div
+  class="fb-hero fb-hero--{{ section.settings.height }}"
+  data-fb-no-auto
+  data-fb-parallax-scope
+  style="
+    --hero-bg: {{ section.settings.background_color }};
+    --hero-text: {{ section.settings.text_color }};
+    --hero-accent: {{ section.settings.accent_color }};
+  "
+>
+  <div class="fb-hero__art" aria-hidden="true">
+    {% comment %} Slow layer: large soft canopy blob, top right {% endcomment %}
+    <svg
+      class="fb-hero__layer fb-hero__layer--canopy"
+      {% if section.settings.parallax_drift > 0 %}data-fb-parallax="{{ drift }}"{% endif %}
+      viewBox="0 0 600 600"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M300 40c120-30 240 30 270 150s-40 230-140 280S190 520 110 430 20 220 90 140 220 60 300 40Z"
+        style="fill: var(--hero-text); opacity: 0.07;"
+      />
+    </svg>
+
+    {% comment %} Mid layer: terracotta ring, off the left edge {% endcomment %}
+    <svg
+      class="fb-hero__layer fb-hero__layer--ring"
+      {% if section.settings.parallax_drift > 0 %}data-fb-parallax="{{ drift_mid }}"{% endif %}
+      viewBox="0 0 400 400"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="200" cy="200" r="150" fill="none" style="stroke: var(--hero-accent); opacity: 0.3;" stroke-width="34"/>
+      <circle cx="200" cy="200" r="86" style="fill: var(--hero-accent); opacity: 0.12;"/>
+    </svg>
+
+    {% comment %} Fast layer: line-art botanical sprig, right side {% endcomment %}
+    <svg
+      class="fb-hero__layer fb-hero__layer--sprig"
+      {% if section.settings.parallax_drift > 0 %}data-fb-parallax="{{ drift_fast }}"{% endif %}
+      viewBox="0 0 300 520"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style="stroke: var(--hero-text); opacity: 0.28;"
+    >
+      <path d="M150 510C150 380 150 220 150 30" stroke-width="3" stroke-linecap="round"/>
+      <path d="M150 120c-52-8-88-46-92-98 52 8 88 46 92 98Z" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M150 200c52-8 88-46 92-98-52 8-88 46-92 98Z" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M150 285c-48-7-82-42-86-90 48 7 82 42 86 90Z" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M150 370c48-7 82-42 86-90-48 7-82 42-86 90Z" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M150 445c-40-6-68-35-72-75 40 6 68 35 72 75Z" stroke-width="3" stroke-linejoin="round"/>
+    </svg>
+
+    {% comment %} Mid layer: small seed cluster, bottom left of content {% endcomment %}
+    <svg
+      class="fb-hero__layer fb-hero__layer--seeds"
+      {% if section.settings.parallax_drift > 0 %}data-fb-parallax="{{ drift_mid }}"{% endif %}
+      viewBox="0 0 200 120"
+      xmlns="http://www.w3.org/2000/svg"
+      style="fill: var(--hero-accent);"
+    >
+      <ellipse cx="24" cy="90" rx="10" ry="16" opacity="0.5" transform="rotate(-24 24 90)"/>
+      <ellipse cx="70" cy="58" rx="8" ry="13" opacity="0.35" transform="rotate(14 70 58)"/>
+      <ellipse cx="120" cy="86" rx="9" ry="15" opacity="0.45" transform="rotate(-10 120 86)"/>
+      <ellipse cx="166" cy="44" rx="7" ry="12" opacity="0.3" transform="rotate(22 166 44)"/>
+    </svg>
+  </div>
+
+  <div class="fb-hero__content">
+    {% if section.settings.eyebrow != blank %}
+      <p class="fb-hero__eyebrow fb-hero__item" style="--fb-stagger: 0ms;">{{ section.settings.eyebrow }}</p>
+    {% endif %}
+
+    {% if section.settings.heading != blank %}
+      <h1 class="fb-hero__heading fb-hero__item" style="--fb-stagger: 130ms;">{{ section.settings.heading }}</h1>
+    {% endif %}
+
+    {% if section.settings.subheading != blank %}
+      <p class="fb-hero__subheading fb-hero__item" style="--fb-stagger: 260ms;">{{ section.settings.subheading }}</p>
+    {% endif %}
+
+    {% if section.settings.cta_label != blank %}
+      <div class="fb-hero__actions fb-hero__item" style="--fb-stagger: 390ms;">
+        <a class="button fb-hero__cta" href="{{ section.settings.cta_link | default: '/collections/all' }}">
+          {{- section.settings.cta_label -}}
+        </a>
+        {% if section.settings.secondary_label != blank %}
+          <a class="button-secondary fb-hero__cta" href="{{ section.settings.secondary_link | default: '/pages/about' }}">
+            {{- section.settings.secondary_label -}}
+          </a>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if section.settings.trust_note != blank %}
+      <p class="fb-hero__note fb-hero__item" style="--fb-stagger: 520ms;">{{ section.settings.trust_note }}</p>
+    {% endif %}
+  </div>
+
+  {% if section.settings.show_scroll_cue %}
+    <div class="fb-hero__cue fb-hero__item" style="--fb-stagger: 700ms;" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 9l8 8 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  {% endif %}
+</div>
+
+{% stylesheet %}
+  .fb-hero {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    background-color: var(--hero-bg);
+    color: var(--hero-text);
+  }
+
+  .fb-hero--full {
+    min-height: calc(100svh - var(--header-group-height, 110px));
+  }
+
+  .fb-hero--tall {
+    min-height: 82svh;
+  }
+
+  .fb-hero--medium {
+    min-height: 64svh;
+  }
+
+  .fb-hero__art {
+    position: absolute;
+    inset: -12% 0;
+    pointer-events: none;
+  }
+
+  .fb-hero__layer {
+    position: absolute;
+  }
+
+  .fb-hero__layer--canopy {
+    top: -18%;
+    right: -14%;
+    width: clamp(340px, 52vw, 780px);
+    height: auto;
+  }
+
+  .fb-hero__layer--ring {
+    left: -10%;
+    bottom: 4%;
+    width: clamp(220px, 30vw, 420px);
+    height: auto;
+  }
+
+  .fb-hero__layer--sprig {
+    right: 7%;
+    top: 22%;
+    width: clamp(90px, 13vw, 190px);
+    height: auto;
+  }
+
+  .fb-hero__layer--seeds {
+    left: 12%;
+    top: 16%;
+    width: clamp(110px, 14vw, 200px);
+    height: auto;
+  }
+
+  .fb-hero__content {
+    position: relative;
+    width: min(1160px, 100% - 2.5rem);
+    margin-inline: auto;
+    padding-block: clamp(4rem, 12vh, 8rem);
+    max-width: 44rem;
+    margin-inline-start: max(1.25rem, calc((100% - 1160px) / 2));
+  }
+
+  .fb-hero__eyebrow {
+    margin: 0 0 1.1rem;
+    font-family: var(--font-subheading--family);
+    font-size: 0.8rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    opacity: 0.75;
+  }
+
+  .fb-hero__heading {
+    margin: 0;
+    font-family: var(--font-h1--family);
+    font-weight: var(--font-h1--weight);
+    font-size: clamp(2.5rem, 6.4vw, 4.6rem);
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+    color: var(--hero-text);
+  }
+
+  .fb-hero__subheading {
+    margin: 1.4rem 0 0;
+    font-size: clamp(1rem, 1.4vw, 1.2rem);
+    line-height: 1.6;
+    max-width: 34rem;
+    opacity: 0.85;
+  }
+
+  .fb-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-block-start: 2.1rem;
+  }
+
+  .fb-hero__cta {
+    text-decoration: none;
+  }
+
+  .fb-hero__note {
+    margin: 1.6rem 0 0;
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+    opacity: 0.65;
+  }
+
+  .fb-hero__cue {
+    position: absolute;
+    left: 50%;
+    bottom: 1.4rem;
+    transform: translateX(-50%);
+    opacity: 0.5;
+  }
+
+  /* Staggered entrance, active only when the motion system is on. */
+  html.fb-motion .fb-hero__item {
+    opacity: 0;
+    transform: translateY(22px);
+    animation: fb-hero-rise 0.85s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+    animation-delay: var(--fb-stagger, 0ms);
+  }
+
+  html.fb-motion .fb-hero__cue {
+    transform: translateX(-50%);
+    animation: fb-hero-cue 2.6s ease-in-out 1.4s infinite, fb-hero-fade 0.8s ease var(--fb-stagger, 0ms) both;
+  }
+
+  @keyframes fb-hero-rise {
+    from {
+      opacity: 0;
+      transform: translateY(22px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fb-hero-fade {
+    from { opacity: 0; }
+    to { opacity: 0.5; }
+  }
+
+  @keyframes fb-hero-cue {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(7px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html.fb-motion .fb-hero__item,
+    html.fb-motion .fb-hero__cue {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
+    html.fb-motion .fb-hero__cue {
+      transform: translateX(-50%);
+      opacity: 0.5;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .fb-hero__content {
+      margin-inline: 1.25rem;
+      width: auto;
+      padding-block: 4.5rem 5.5rem;
+    }
+
+    .fb-hero__layer--canopy {
+      top: -8%;
+      right: -34%;
+      width: 120vw;
+    }
+
+    .fb-hero__layer--sprig {
+      right: -4%;
+      top: auto;
+      bottom: -6%;
+      width: 100px;
+    }
+
+    .fb-hero__layer--ring {
+      left: -28%;
+      bottom: -6%;
+    }
+
+    .fb-hero__layer--seeds {
+      left: auto;
+      right: 8%;
+      top: 7%;
+      width: 100px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Fernbrook hero",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Fernbrook Wellness Co."
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Wellness, without the noise."
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Small-batch supplements with honest sourcing, plain-spoken labels, and third-party testing on every batch."
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button label",
+      "default": "Shop the collection"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_label",
+      "label": "Secondary button label"
+    },
+    {
+      "type": "url",
+      "id": "secondary_link",
+      "label": "Secondary button link"
+    },
+    {
+      "type": "text",
+      "id": "trust_note",
+      "label": "Small note under buttons",
+      "default": "Third-party tested · Plain labels · Free shipping over $40"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "select",
+      "id": "height",
+      "label": "Section height",
+      "options": [
+        { "value": "full", "label": "Full screen" },
+        { "value": "tall", "label": "Tall" },
+        { "value": "medium", "label": "Medium" }
+      ],
+      "default": "full"
+    },
+    {
+      "type": "range",
+      "id": "parallax_drift",
+      "label": "Parallax drift",
+      "info": "How far the botanical shapes drift on scroll. Set to 0 to turn parallax off.",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "checkbox",
+      "id": "show_scroll_cue",
+      "label": "Show scroll-down cue",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "{{ settings.color_palette.background }}"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "{{ settings.color_palette.foreground }}"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent",
+      "default": "#C96F4A"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Fernbrook hero"
+    }
+  ]
+}
+{% endschema %}

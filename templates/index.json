@@ -9,83 +9,103 @@
  */
 {
   "sections": {
-    "hero_jVaWmY": {
-      "type": "hero",
+    "fernbrook_hero": {
+      "type": "fernbrook-hero",
+      "settings": {
+        "eyebrow": "Fernbrook Wellness Co.",
+        "heading": "Wellness, without the noise.",
+        "subheading": "Small-batch supplements with honest sourcing, plain-spoken labels, and third-party testing on every batch.",
+        "cta_label": "Shop the collection",
+        "cta_link": "shopify://collections/all",
+        "trust_note": "Third-party tested · Plain labels · Free shipping over $40",
+        "height": "full",
+        "parallax_drift": 5,
+        "show_scroll_cue": true
+      }
+    },
+    "fernbrook_why": {
+      "type": "fernbrook-why",
       "blocks": {
-        "text_YLPk4p": {
-          "type": "text",
-          "name": "t:names.heading",
+        "benefit_sourcing": {
+          "type": "benefit",
           "settings": {
-            "text": "<p>Browse our latest products</p>",
-            "width": "fit-content",
-            "max_width": "normal",
-            "alignment": "left",
-            "type_preset": "h2",
-            "font": "var(--font-body--family)",
-            "font_size": "1rem",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "text_color": "{{ settings.color_palette.background }}",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
+            "icon": "leaf",
+            "heading": "Sourced with care",
+            "text": "Single-origin botanicals and minerals from suppliers we know by name."
+          }
         },
-        "button_H9gpTf": {
-          "type": "button",
-          "name": "t:names.button",
+        "benefit_testing": {
+          "type": "benefit",
           "settings": {
-            "label": "Shop all",
-            "link": "shopify://collections/all",
-            "open_in_new_tab": false,
-            "style_class": "button-custom",
-            "custom_button_background": "rgba(0, 0, 0, 0)",
-            "custom_button_text": "{{ settings.color_palette.background }}",
-            "custom_button_border": "{{ settings.color_palette.background }}",
-            "width": "fit-content",
-            "custom_width": 100,
-            "width_mobile": "fit-content",
-            "custom_width_mobile": 100
-          },
-          "blocks": {}
+            "icon": "shield",
+            "heading": "Third-party tested",
+            "text": "Every batch is verified for identity and purity by an independent lab."
+          }
+        },
+        "benefit_labels": {
+          "type": "benefit",
+          "settings": {
+            "icon": "label",
+            "heading": "Plain-spoken labels",
+            "text": "What is in the bottle, in words you do not need a chemistry degree to read."
+          }
         }
       },
       "block_order": [
-        "text_YLPk4p",
-        "button_H9gpTf"
+        "benefit_sourcing",
+        "benefit_testing",
+        "benefit_labels"
       ],
-      "name": "t:names.hero",
       "settings": {
-        "media_type_1": "image",
-        "media_type_2": "image",
-        "link": "",
-        "open_in_new_tab": false,
-        "content_direction": "column",
-        "vertical_on_mobile": true,
-        "horizontal_alignment": "space-between",
-        "vertical_alignment": "flex-end",
-        "align_baseline": true,
-        "horizontal_alignment_flex_direction_column": "center",
-        "vertical_alignment_flex_direction_column": "flex-end",
-        "gap": 24,
-        "section_width": "page-width",
-        "section_height": "medium",
-        "section_height_custom": 50,
-        "toggle_overlay": true,
-        "overlay_color": "#12121266",
-        "overlay_style": "solid",
-        "gradient_direction": "to bottom",
-        "blurred_reflection": false,
-        "reflection_opacity": 75,
-        "padding-block-start": 100,
-        "padding-block-end": 72
+        "heading": "Why Fernbrook",
+        "intro": "Simple formulas, honest sourcing, and testing we publish. That is the whole pitch."
+      }
+    },
+    "fernbrook_bundle": {
+      "type": "fernbrook-featured-bundle",
+      "blocks": {
+        "item_oregano": {
+          "type": "item",
+          "settings": {
+            "title": "Oregano Oil Drops",
+            "note": "A traditional herbal favorite to support the body's natural defenses.*"
+          }
+        },
+        "item_d3k2": {
+          "type": "item",
+          "settings": {
+            "title": "Vitamin D3 + K2",
+            "note": "Paired for absorption, supporting immune function and bone health.*"
+          }
+        },
+        "item_zinc": {
+          "type": "item",
+          "settings": {
+            "title": "Zinc Picolinate",
+            "note": "A well-absorbed form of a mineral your immune system relies on.*"
+          }
+        },
+        "item_elderberry": {
+          "type": "item",
+          "settings": {
+            "title": "Elderberry Gummies",
+            "note": "A daily gummy made with real elderberry extract.*"
+          }
+        }
+      },
+      "block_order": [
+        "item_oregano",
+        "item_d3k2",
+        "item_zinc",
+        "item_elderberry"
+      ],
+      "settings": {
+        "product": "immune-essentials-bundle",
+        "eyebrow": "The seasonal routine",
+        "text": "Four daily essentials that support immune function, in one box at a bundle price.",
+        "badge_text": "Save 20%",
+        "show_price": true,
+        "cta_label": "See the bundle"
       }
     },
     "product_list_fa6P9H": {
@@ -127,7 +147,7 @@
               "type": "_product-list-text",
               "name": "t:names.collection_title",
               "settings": {
-                "text": "<h3>{{ closest.collection.title }}</h3>",
+                "text": "<h3>The full lineup</h3>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -270,13 +290,15 @@
         "section_width": "page-width",
         "horizontal_alignment": "flex-start",
         "gap": 28,
-        "padding-block-start": 48,
-        "padding-block-end": 48
+        "padding-block-start": 64,
+        "padding-block-end": 64
       }
     }
   },
   "order": [
-    "hero_jVaWmY",
+    "fernbrook_hero",
+    "fernbrook_why",
+    "fernbrook_bundle",
     "product_list_fa6P9H"
   ]
 }

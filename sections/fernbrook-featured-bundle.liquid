@@ -1,0 +1,443 @@
+{% liquid
+  assign bundle_product = section.settings.product
+%}
+
+<div
+  class="fb-bundle"
+  data-fb-no-auto
+  style="
+    --bundle-bg: {{ section.settings.background_color }};
+    --bundle-text: {{ section.settings.text_color }};
+    --bundle-accent: {{ section.settings.accent_color }};
+  "
+>
+  <div class="fb-bundle__inner">
+    <div class="fb-bundle__visual" data-fb-reveal="left">
+      <div class="fb-bundle__panel">
+        <svg class="fb-bundle__panel-art" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path
+            d="M200 30c80-20 160 20 180 100s-27 153-93 186-146 13-199-47S28 120 75 67 147 43 200 30Z"
+            style="fill: var(--bundle-text); opacity: 0.08;"
+          />
+          <circle cx="330" cy="90" r="70" fill="none" style="stroke: var(--bundle-accent); opacity: 0.4;" stroke-width="16"/>
+        </svg>
+
+        {% if bundle_product != blank and bundle_product.featured_image != blank %}
+          {{
+            bundle_product.featured_image
+            | image_url: width: 1000
+            | image_tag: widths: '480, 720, 1000', sizes: '(min-width: 900px) 45vw, 92vw', class: 'fb-bundle__image'
+          }}
+        {% else %}
+          <svg class="fb-bundle__placeholder" viewBox="0 0 200 260" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="82" y="18" width="36" height="26" rx="4" style="fill: var(--bundle-text); opacity: 0.85;"/>
+            <path d="M74 56c0-8 10-12 26-12s26 4 26 12v14c14 10 22 26 22 44v104a24 24 0 0 1-24 24H76a24 24 0 0 1-24-24V114c0-18 8-34 22-44V56Z" style="fill: var(--bundle-text); opacity: 0.9;"/>
+            <rect x="66" y="128" width="68" height="64" rx="6" style="fill: var(--bundle-bg);"/>
+            <path d="M78 144h44M78 156h44M78 168h28" style="stroke: var(--bundle-text); opacity: 0.7;" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+        {% endif %}
+
+        {% if section.settings.badge_text != blank %}
+          <span class="fb-bundle__badge">{{ section.settings.badge_text }}</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="fb-bundle__details">
+      {% if section.settings.eyebrow != blank %}
+        <p class="fb-bundle__eyebrow" data-fb-reveal>{{ section.settings.eyebrow }}</p>
+      {% endif %}
+
+      <h2 class="fb-bundle__heading" data-fb-reveal style="--fb-delay: 90ms;">
+        {%- if section.settings.heading != blank -%}
+          {{ section.settings.heading }}
+        {%- elsif bundle_product != blank -%}
+          {{ bundle_product.title }}
+        {%- else -%}
+          Featured bundle
+        {%- endif -%}
+      </h2>
+
+      {% if section.settings.text != blank %}
+        <p class="fb-bundle__text" data-fb-reveal style="--fb-delay: 180ms;">{{ section.settings.text }}</p>
+      {% endif %}
+
+      {% if section.blocks.size > 0 %}
+        <ol class="fb-bundle__items">
+          {% for block in section.blocks %}
+            <li
+              class="fb-bundle__item"
+              data-fb-reveal
+              style="--fb-delay: {{ forloop.index0 | times: 100 | plus: 240 }}ms;"
+              {{ block.shopify_attributes }}
+            >
+              <span class="fb-bundle__item-number" aria-hidden="true">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
+              <span class="fb-bundle__item-body">
+                <span class="fb-bundle__item-title">{{ block.settings.title }}</span>
+                {% if block.settings.note != blank %}
+                  <span class="fb-bundle__item-note">{{ block.settings.note }}</span>
+                {% endif %}
+              </span>
+            </li>
+          {% endfor %}
+        </ol>
+      {% endif %}
+
+      <div class="fb-bundle__buy" data-fb-reveal style="--fb-delay: 300ms;">
+        {% if bundle_product != blank %}
+          {% if section.settings.show_price %}
+            <span class="fb-bundle__price">
+              <span class="fb-bundle__price-now">{{ bundle_product.price | money }}</span>
+              {% if bundle_product.compare_at_price > bundle_product.price %}
+                <s class="fb-bundle__price-was">{{ bundle_product.compare_at_price | money }}</s>
+              {% endif %}
+            </span>
+          {% endif %}
+          <a class="fb-bundle__cta" href="{{ bundle_product.url }}">
+            {{- section.settings.cta_label | default: 'See the bundle' -}}
+          </a>
+        {% else %}
+          <p class="fb-bundle__text">Select a product in the theme editor to feature it here.</p>
+        {% endif %}
+      </div>
+
+      {% if section.settings.disclaimer != blank %}
+        <p class="fb-bundle__disclaimer" data-fb-reveal="fade" style="--fb-delay: 380ms;">{{ section.settings.disclaimer }}</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .fb-bundle {
+    background-color: var(--bundle-bg);
+    color: var(--bundle-text);
+  }
+
+  .fb-bundle__inner {
+    width: min(1160px, 100% - 2.5rem);
+    margin-inline: auto;
+    padding-block: clamp(3.5rem, 9vw, 7rem);
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: clamp(2rem, 5vw, 5rem);
+    align-items: start;
+  }
+
+  .fb-bundle__panel {
+    position: relative;
+    overflow: hidden;
+    border-radius: 18px;
+    background:
+      linear-gradient(160deg, rgb(from var(--bundle-text) r g b / 0.14), rgb(from var(--bundle-text) r g b / 0.03));
+    padding: clamp(2rem, 4vw, 3.5rem);
+    display: grid;
+    place-items: center;
+    min-height: clamp(320px, 42vw, 520px);
+  }
+
+  .fb-bundle__panel-art {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .fb-bundle__image {
+    position: relative;
+    width: 100%;
+    max-width: 380px;
+    height: auto;
+    border-radius: 10px;
+  }
+
+  .fb-bundle__placeholder {
+    position: relative;
+    width: clamp(140px, 16vw, 200px);
+    height: auto;
+  }
+
+  .fb-bundle__badge {
+    position: absolute;
+    top: 1.1rem;
+    left: 1.1rem;
+    background-color: var(--bundle-accent);
+    color: #fff6ec;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.45rem 0.85rem;
+    border-radius: 100px;
+  }
+
+  .fb-bundle__eyebrow {
+    margin: 0 0 1rem;
+    font-family: var(--font-subheading--family);
+    font-size: 0.8rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  .fb-bundle__heading {
+    margin: 0;
+    font-family: var(--font-h2--family);
+    font-weight: var(--font-h2--weight);
+    font-size: clamp(1.9rem, 3.8vw, 2.8rem);
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+  }
+
+  .fb-bundle__text {
+    margin: 1.1rem 0 0;
+    line-height: 1.65;
+    max-width: 36rem;
+    opacity: 0.85;
+  }
+
+  .fb-bundle__items {
+    list-style: none;
+    margin: clamp(1.5rem, 3vw, 2.5rem) 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0;
+  }
+
+  .fb-bundle__item {
+    display: flex;
+    gap: 1.1rem;
+    align-items: baseline;
+    padding-block: 1.05rem;
+    border-block-start: 1px solid rgb(from var(--bundle-text) r g b / 0.16);
+  }
+
+  .fb-bundle__item:last-child {
+    border-block-end: 1px solid rgb(from var(--bundle-text) r g b / 0.16);
+  }
+
+  .fb-bundle__item-number {
+    font-family: var(--font-subheading--family);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    color: var(--bundle-accent);
+  }
+
+  .fb-bundle__item-body {
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  .fb-bundle__item-title {
+    font-weight: 600;
+  }
+
+  .fb-bundle__item-note {
+    font-size: 0.88rem;
+    line-height: 1.5;
+    opacity: 0.75;
+  }
+
+  .fb-bundle__buy {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-block-start: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  .fb-bundle__price {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+  }
+
+  .fb-bundle__price-now {
+    font-family: var(--font-h3--family);
+    font-size: 1.6rem;
+    font-weight: 600;
+  }
+
+  .fb-bundle__price-was {
+    opacity: 0.6;
+  }
+
+  .fb-bundle__cta {
+    display: inline-block;
+    background-color: var(--bundle-text);
+    color: var(--bundle-bg);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.85rem 1.8rem;
+    border-radius: 100px;
+    transition: opacity 0.25s ease, translate 0.25s ease;
+  }
+
+  .fb-bundle__cta:hover {
+    opacity: 0.88;
+    translate: 0 -2px;
+    color: var(--bundle-bg);
+  }
+
+  .fb-bundle__disclaimer {
+    margin: 1.75rem 0 0;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    max-width: 34rem;
+    opacity: 0.55;
+  }
+
+  @media screen and (min-width: 900px) {
+    .fb-bundle__visual {
+      position: sticky;
+      top: calc(var(--header-group-height, 90px) + 1.5rem);
+    }
+  }
+
+  @media screen and (max-width: 899px) {
+    .fb-bundle__inner {
+      grid-template-columns: 1fr;
+    }
+
+    .fb-bundle__panel {
+      min-height: 300px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fb-bundle__cta,
+    .fb-bundle__cta:hover {
+      translate: none;
+      transition: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Featured bundle",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "The seasonal routine"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "info": "Leave blank to use the product title."
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Four daily essentials that support immune function, in one box at a bundle price."
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge",
+      "default": "Save 20%"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Show price",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button label",
+      "default": "See the bundle"
+    },
+    {
+      "type": "textarea",
+      "id": "disclaimer",
+      "label": "Disclaimer",
+      "default": "*These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease."
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "{{ settings.color_palette.color1 }}"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "{{ settings.color_palette.background }}"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent",
+      "default": "#C96F4A"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Bundle item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Oregano Oil Drops"
+        },
+        {
+          "type": "textarea",
+          "id": "note",
+          "label": "Note",
+          "default": "A traditional herbal favorite to support the body's natural defenses.*"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Featured bundle",
+      "blocks": [
+        {
+          "type": "item",
+          "settings": {
+            "title": "Oregano Oil Drops",
+            "note": "A traditional herbal favorite to support the body's natural defenses.*"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "title": "Vitamin D3 + K2",
+            "note": "Paired for absorption, supporting immune function and bone health.*"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "title": "Zinc Picolinate",
+            "note": "A well-absorbed form of a mineral your immune system relies on.*"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "title": "Elderberry Gummies",
+            "note": "A daily gummy made with real elderberry extract.*"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
