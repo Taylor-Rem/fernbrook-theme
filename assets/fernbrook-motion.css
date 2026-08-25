@@ -1,0 +1,52 @@
+/*
+ * Fernbrook motion — scroll-driven reveals.
+ *
+ * Elements are only hidden when <html> carries the `fb-motion` class, which
+ * fernbrook-motion.js adds at parse time and ONLY when JavaScript runs, the
+ * visitor has not asked for reduced motion, and we're not in the theme editor.
+ * No JS (or reduced motion) means nothing is ever hidden.
+ *
+ * All animation is transform/opacity only.
+ */
+
+html.fb-motion [data-fb-reveal],
+html.fb-motion .fb-reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition-delay: var(--fb-delay, 0s);
+}
+
+html.fb-motion [data-fb-reveal='fade'] {
+  transform: none;
+}
+
+html.fb-motion [data-fb-reveal='scale'] {
+  transform: translateY(14px) scale(0.965);
+}
+
+html.fb-motion [data-fb-reveal='left'] {
+  transform: translateX(-30px);
+}
+
+html.fb-motion [data-fb-reveal='right'] {
+  transform: translateX(30px);
+}
+
+html.fb-motion :is([data-fb-reveal], .fb-reveal).fb-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Belt and suspenders: even if the class somehow lands, never animate for
+   visitors who asked for reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  html.fb-motion [data-fb-reveal],
+  html.fb-motion .fb-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

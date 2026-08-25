@@ -43,6 +43,9 @@
     {%- render 'theme-styles-variables' -%}
     {%- render 'color-palette' -%}
 
+    {{ 'fernbrook-motion.css' | asset_url | stylesheet_tag }}
+    <script src="{{ 'fernbrook-motion.js' | asset_url }}" defer></script>
+
     {% if request.design_mode %}
       {%- render 'theme-editor' -%}
     {% endif %}
