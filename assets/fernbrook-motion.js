@@ -5,6 +5,10 @@
  *   product cards) fade/slide in when they enter the viewport.
  * - Parallax: elements marked with [data-fb-parallax="<speed>"] drift on
  *   scroll. Transform/opacity only; one rAF-throttled scroll listener.
+ * - Scrub: elements marked with [data-fb-scrub] get a CSS custom property
+ *   `--fb-progress` (0 → 1) describing how far they've scrolled through the
+ *   viewport (0 = top enters the bottom edge, 1 = bottom leaves the top edge).
+ *   Everything downstream is pure CSS reading that one property.
  *
  * The whole system is off when the visitor prefers reduced motion or when the
  * page is open in the Shopify theme editor (content must never be hidden from
@@ -76,7 +80,9 @@
   /* --------------------------------------------------------------- parallax */
 
   function setupParallax() {
-    var layers = Array.prototype.slice.call(document.querySelectorAll('[data-fb-parallax], [data-fb-rotate]'));
+    var layers = Array.prototype.slice.call(
+      document.querySelectorAll('[data-fb-parallax], [data-fb-rotate], [data-fb-scrub]')
+    );
     if (!layers.length) return;
 
     var items = layers.map(function (el) {
@@ -85,6 +91,7 @@
         speed: parseFloat(el.getAttribute('data-fb-parallax')) || 0,
         // Total degrees swept while the element's host travels through the viewport.
         rotate: parseFloat(el.getAttribute('data-fb-rotate')) || 0,
+        scrub: el.hasAttribute('data-fb-scrub'),
         visible: false,
       };
     });
@@ -96,6 +103,9 @@
         });
         if (item) item.visible = entry.isIntersecting;
       });
+      // Paint newly visible items right away instead of waiting for the next
+      // scroll event (matters for scrub elements sitting above the fold).
+      onScroll();
     });
     items.forEach(function (item) {
       visibility.observe(item.el);
@@ -112,6 +122,13 @@
         var rect = host.getBoundingClientRect();
         // Progress of the host through the viewport: 0 entering, 1 leaving.
         var progress = (viewportHeight - rect.top) / (viewportHeight + rect.height);
+        if (item.scrub) {
+          // The one scroll-linked style write: a clamped 0–1 progress custom
+          // property. All animation downstream is CSS calc() on this value.
+          var clamped = Math.min(1, Math.max(0, progress));
+          item.el.style.setProperty('--fb-progress', clamped.toFixed(4));
+        }
+        if (!item.speed && !item.rotate) return;
         var centered = progress - 0.5;
         var transform = 'translate3d(0,' + (centered * item.speed * viewportHeight).toFixed(1) + 'px,0)';
         if (item.rotate) transform += ' rotate(' + (centered * item.rotate).toFixed(2) + 'deg)';
