@@ -1,0 +1,475 @@
+{% liquid
+  assign caption_count = section.blocks.size | at_least: 1
+  assign center_denominator = caption_count | times: 2
+%}
+
+{% comment %}
+  Pinned, scroll-scrubbed bottle turntable. The outer wrapper is tall and
+  carries data-fb-scrub, so fernbrook-motion.js feeds it a single --fb-progress
+  custom property (0 → 1) as it scrolls through. Everything else — the bottle
+  scale, the sliding label texture, the caption crossfades — is pure CSS calc()
+  on that property. With no JS, reduced motion, or in the theme editor
+  (html.fb-motion absent) the section collapses to a normal static block with
+  the bottle at full size and all captions stacked.
+{% endcomment %}
+
+<div
+  class="fb-story"
+  data-fb-no-auto
+  data-fb-scrub
+  data-fb-parallax-scope
+  style="
+    --story-bg: {{ section.settings.background_color }};
+    --story-text: {{ section.settings.text_color }};
+    --story-accent: {{ section.settings.accent_color }};
+    --story-glass: {{ section.settings.glass_color }};
+    --story-length: {{ section.settings.scrub_length }}vh;
+  "
+>
+  <div class="fb-story__stage">
+    <div class="fb-story__art" aria-hidden="true">
+      <svg class="fb-story__blob fb-story__blob--canopy" data-fb-parallax="0.05" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M300 40c120-30 240 30 270 150s-40 230-140 280S190 520 110 430 20 220 90 140 220 60 300 40Z"
+          style="fill: var(--story-text); opacity: 0.06;"
+        />
+      </svg>
+      <svg class="fb-story__blob fb-story__blob--ring" data-fb-parallax="0.11" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="200" cy="200" r="140" fill="none" style="stroke: var(--story-accent); opacity: 0.22;" stroke-width="30" stroke-dasharray="180 44" stroke-linecap="round" data-fb-rotate="60"/>
+      </svg>
+      <svg class="fb-story__blob fb-story__blob--pebble" data-fb-parallax="0.16" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M200 30c76-18 152 22 170 96s-26 144-88 175-138 12-188-44S32 118 76 68 150 42 200 30Z"
+          style="fill: var(--story-accent); opacity: 0.08;"
+        />
+      </svg>
+    </div>
+
+    <div class="fb-story__bottle" aria-hidden="true">
+      <div class="fb-story__bulb"></div>
+      <div class="fb-story__collar"></div>
+      <div class="fb-story__glass">
+        <div class="fb-story__label"></div>
+        <div class="fb-story__shine"></div>
+      </div>
+    </div>
+
+    <div class="fb-story__captions">
+      {% for block in section.blocks %}
+        {% assign center_numerator = forloop.index0 | times: 2 | plus: 1 | times: 1.0 %}
+        <div
+          class="fb-story__caption"
+          style="--cap-center: {{ center_numerator | divided_by: center_denominator }};"
+          {{ block.shopify_attributes }}
+        >
+          {% if block.settings.heading != blank %}
+            <h3 class="fb-story__caption-heading">{{ block.settings.heading }}</h3>
+          {% endif %}
+          {% if block.settings.text != blank %}
+            <p class="fb-story__caption-text">{{ block.settings.text }}</p>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .fb-story {
+    position: relative;
+    background-color: var(--story-bg);
+    color: var(--story-text);
+  }
+
+  /* The tall scroll runway only exists when the motion system is on. */
+  html.fb-motion .fb-story {
+    height: var(--story-length, 250vh);
+  }
+
+  .fb-story__stage {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(1.5rem, 4vh, 3rem);
+    padding: clamp(3.5rem, 9vw, 6rem) 1.25rem;
+    overflow: hidden;
+    /* Remap raw viewport progress (~0.25–0.75 covers the pinned stretch)
+       to a 0–1 animation timeline for everything below. */
+    --p: clamp(0, calc((var(--fb-progress, 0) - 0.25) * 2), 1);
+  }
+
+  html.fb-motion .fb-story__stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    padding-block: 0;
+  }
+
+  /* ------------------------------------------------------------ background */
+
+  .fb-story__art {
+    position: absolute;
+    inset: -12% 0;
+    pointer-events: none;
+  }
+
+  .fb-story__blob {
+    position: absolute;
+    height: auto;
+  }
+
+  .fb-story__blob--canopy {
+    top: -14%;
+    left: -12%;
+    width: clamp(300px, 46vw, 680px);
+  }
+
+  .fb-story__blob--ring {
+    right: -8%;
+    top: 16%;
+    width: clamp(200px, 26vw, 380px);
+  }
+
+  .fb-story__blob--pebble {
+    right: 4%;
+    bottom: -16%;
+    width: clamp(220px, 30vw, 460px);
+  }
+
+  /* ---------------------------------------------------------------- bottle */
+
+  .fb-story__bottle {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: clamp(104px, 22vmin, 180px);
+  }
+
+  html.fb-motion .fb-story__bottle {
+    transform: scale(calc(0.85 + var(--p) * 0.15));
+    transform-origin: center bottom;
+    will-change: transform;
+  }
+
+  /* Soft ground shadow so the bottle sits on something. */
+  .fb-story__bottle::after {
+    content: '';
+    position: absolute;
+    bottom: -5%;
+    left: 6%;
+    right: 6%;
+    height: 5%;
+    border-radius: 50%;
+    background: radial-gradient(50% 50% at 50% 50%, rgb(from var(--story-text) r g b / 0.3), transparent 72%);
+  }
+
+  .fb-story__bulb {
+    width: 30%;
+    aspect-ratio: 1 / 0.8;
+    border-radius: 46% 46% 34% 34% / 62% 62% 28% 28%;
+    background: radial-gradient(120% 120% at 35% 22%, #4c4c4c, #141414 72%);
+  }
+
+  .fb-story__collar {
+    width: 40%;
+    aspect-ratio: 1 / 0.62;
+    margin-top: -2%;
+    border-radius: 6% 6% 3% 3%;
+    background: linear-gradient(90deg, #060606, #3a3a3a 30%, #585858 46%, #2c2c2c 72%, #000);
+  }
+
+  .fb-story__glass {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 10 / 21;
+    margin-top: -1px;
+    overflow: hidden;
+    border-radius: 20% 20% 8% 8% / 10% 10% 3.5% 3.5%;
+    /* Fixed cylinder shading: dark edges, bright core. This gradient never
+       moves — only the label texture slides — which is what sells the spin. */
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--story-glass, #8a5a2b) 50%, #000) 0%,
+      color-mix(in srgb, var(--story-glass, #8a5a2b) 82%, #000) 13%,
+      var(--story-glass, #8a5a2b) 30%,
+      color-mix(in srgb, var(--story-glass, #8a5a2b) 74%, #fff) 46%,
+      var(--story-glass, #8a5a2b) 62%,
+      color-mix(in srgb, var(--story-glass, #8a5a2b) 72%, #000) 85%,
+      color-mix(in srgb, var(--story-glass, #8a5a2b) 42%, #000) 100%
+    );
+  }
+
+  /* Specular highlight, also fixed in place. */
+  .fb-story__shine {
+    position: absolute;
+    top: 5%;
+    bottom: 7%;
+    left: 38%;
+    width: 7%;
+    border-radius: 999px;
+    background: linear-gradient(rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.05) 62%, rgba(255, 255, 255, 0.3));
+    opacity: 0.55;
+  }
+
+  .fb-story__label {
+    position: absolute;
+    inset-inline: 0;
+    top: 33%;
+    height: 35%;
+    background-color: var(--story-text, #1f4d3a);
+    border-block: 3px solid var(--story-accent, #c96f4a);
+  }
+
+  /* The repeating wordmark texture. Its background-position-x slides with
+     scroll progress while the shading above stays still: a turntable. */
+  .fb-story__label::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='240'%20height='100'%20viewBox='0%200%20240%20100'%3E%3Cline%20x1='10'%20y1='24'%20x2='10'%20y2='76'%20stroke='%23F7F3EA'%20stroke-opacity='0.3'%20stroke-width='2'/%3E%3Ctext%20x='125'%20y='54'%20text-anchor='middle'%20font-family='Georgia,%20Times,%20serif'%20font-size='21'%20letter-spacing='3'%20fill='%23F7F3EA'%3EFernbrook%3C/text%3E%3Ctext%20x='125'%20y='74'%20text-anchor='middle'%20font-family='Georgia,%20Times,%20serif'%20font-size='9'%20letter-spacing='4'%20fill='%23F7F3EA'%20fill-opacity='0.7'%3EWELLNESS%20CO.%3C/text%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-size: auto 100%;
+    background-position: center top;
+  }
+
+  html.fb-motion .fb-story__label::before {
+    background-position-x: calc(var(--p) * -520px);
+  }
+
+  /* Curvature shading over the label so it follows the glass. */
+  .fb-story__label::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.5),
+      rgba(0, 0, 0, 0.12) 16%,
+      rgba(255, 255, 255, 0.08) 42%,
+      rgba(255, 255, 255, 0.14) 50%,
+      rgba(255, 255, 255, 0.05) 58%,
+      rgba(0, 0, 0, 0.16) 82%,
+      rgba(0, 0, 0, 0.5)
+    );
+  }
+
+  /* -------------------------------------------------------------- captions */
+
+  .fb-story__captions {
+    position: relative;
+    width: min(30rem, 100%);
+    text-align: center;
+  }
+
+  html.fb-motion .fb-story__captions {
+    height: 10.5rem;
+  }
+
+  .fb-story__caption {
+    margin: 0;
+  }
+
+  /* Static fallback: captions simply stack. */
+  .fb-story__caption + .fb-story__caption {
+    margin-block-start: 2rem;
+  }
+
+  /* Scrubbed mode: captions overlap and crossfade in thirds of the timeline.
+     Each caption fades by its distance from its own center on the 0–1 line
+     (|x| built from max(x, -x) for broad browser support). */
+  html.fb-motion .fb-story__caption {
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    margin: 0;
+    --cap-d: calc(var(--p) - var(--cap-center, 0.5));
+    --cap-dist: max(var(--cap-d), calc(0 - var(--cap-d)));
+    opacity: clamp(0, calc(1.15 - var(--cap-dist) * 4.5), 1);
+    transform: translateY(calc(var(--cap-d) * -46px));
+  }
+
+  .fb-story__caption::before {
+    content: '';
+    display: block;
+    width: 2.25rem;
+    height: 3px;
+    border-radius: 2px;
+    margin: 0 auto 1.1rem;
+    background-color: var(--story-accent);
+  }
+
+  .fb-story__caption-heading {
+    margin: 0;
+    font-family: var(--font-h3--family);
+    font-weight: var(--font-h3--weight);
+    font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  .fb-story__caption-text {
+    margin: 0.7rem 0 0;
+    line-height: 1.6;
+    opacity: 0.8;
+  }
+
+  /* Belt and suspenders: reduced motion always gets the static layout even if
+     the fb-motion class is somehow present. */
+  @media (prefers-reduced-motion: reduce) {
+    html.fb-motion .fb-story {
+      height: auto;
+    }
+    html.fb-motion .fb-story__stage {
+      position: static;
+      height: auto;
+      padding: clamp(3.5rem, 9vw, 6rem) 1.25rem;
+    }
+    html.fb-motion .fb-story__bottle {
+      transform: none;
+    }
+    html.fb-motion .fb-story__captions {
+      height: auto;
+    }
+    html.fb-motion .fb-story__caption {
+      position: static;
+      opacity: 1;
+      transform: none;
+    }
+    html.fb-motion .fb-story__caption + .fb-story__caption {
+      margin-block-start: 2rem;
+    }
+    html.fb-motion .fb-story__label::before {
+      background-position-x: center;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .fb-story__bottle {
+      width: clamp(96px, 30vmin, 150px);
+    }
+
+    html.fb-motion .fb-story__captions {
+      height: 12rem;
+    }
+
+    .fb-story__blob--canopy {
+      left: -34%;
+      width: 90vw;
+    }
+
+    .fb-story__blob--ring {
+      right: -22%;
+      top: 8%;
+    }
+
+    .fb-story__blob--pebble {
+      right: -18%;
+      bottom: -10%;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Bottle story",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Scroll"
+    },
+    {
+      "type": "range",
+      "id": "scrub_length",
+      "label": "Scroll length",
+      "info": "How much scrolling the pinned animation spans. Ignored for visitors with reduced motion, who see a normal static section.",
+      "min": 150,
+      "max": 400,
+      "step": 10,
+      "unit": "vh",
+      "default": 250
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "{{ settings.color_palette.background }}"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "{{ settings.color_palette.foreground }}"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent",
+      "default": "#C96F4A"
+    },
+    {
+      "type": "color",
+      "id": "glass_color",
+      "label": "Bottle glass",
+      "default": "#8A5A2B"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "caption",
+      "name": "Caption",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Sourced with care"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Single-origin botanicals and minerals from suppliers we know by name."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 3,
+  "presets": [
+    {
+      "name": "Bottle story",
+      "blocks": [
+        {
+          "type": "caption",
+          "settings": {
+            "heading": "Sourced with care",
+            "text": "Single-origin botanicals and minerals from suppliers we know by name."
+          }
+        },
+        {
+          "type": "caption",
+          "settings": {
+            "heading": "Third-party tested",
+            "text": "Every batch is verified for identity and purity by an independent lab."
+          }
+        },
+        {
+          "type": "caption",
+          "settings": {
+            "heading": "Plain-spoken labels",
+            "text": "What is in the bottle, in words you do not need a chemistry degree to read."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
