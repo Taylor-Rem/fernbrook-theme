@@ -23,42 +23,42 @@
         "show_scroll_cue": true
       }
     },
-    "fernbrook_why": {
-      "type": "fernbrook-why",
+    "fernbrook_bottle_story": {
+      "type": "fernbrook-bottle-story",
       "blocks": {
-        "benefit_sourcing": {
-          "type": "benefit",
+        "caption_sourcing": {
+          "type": "caption",
           "settings": {
-            "icon": "leaf",
             "heading": "Sourced with care",
             "text": "Single-origin botanicals and minerals from suppliers we know by name."
           }
         },
-        "benefit_testing": {
-          "type": "benefit",
+        "caption_testing": {
+          "type": "caption",
           "settings": {
-            "icon": "shield",
             "heading": "Third-party tested",
             "text": "Every batch is verified for identity and purity by an independent lab."
           }
         },
-        "benefit_labels": {
-          "type": "benefit",
+        "caption_labels": {
+          "type": "caption",
           "settings": {
-            "icon": "label",
             "heading": "Plain-spoken labels",
             "text": "What is in the bottle, in words you do not need a chemistry degree to read."
           }
         }
       },
       "block_order": [
-        "benefit_sourcing",
-        "benefit_testing",
-        "benefit_labels"
+        "caption_sourcing",
+        "caption_testing",
+        "caption_labels"
       ],
       "settings": {
-        "heading": "Why Fernbrook",
-        "intro": "Simple formulas, honest sourcing, and testing we publish. That is the whole pitch."
+        "scrub_length": 250,
+        "background_color": "#F7F3EA",
+        "text_color": "#1F4D3A",
+        "accent_color": "#C96F4A",
+        "glass_color": "#8A5A2B"
       }
     },
     "fernbrook_bundle": {
@@ -297,7 +297,7 @@
   },
   "order": [
     "fernbrook_hero",
-    "fernbrook_why",
+    "fernbrook_bottle_story",
     "fernbrook_bundle",
     "product_list_fa6P9H"
   ]
